@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,10 +38,10 @@ public class QuizScreen extends AppCompatActivity {
     MediaPlayer win;
     TestAdapter db;
     String str2, str3, str;
-    int ct=1, rnd;
+    static int ct=0, rnd;
     Cursor NameCursor;
     static int score=0;
-    int colcount = 0;
+    static int colcount = 0;
     Bitmap bmp;
     Random random = new Random();
     @Override
@@ -70,6 +71,7 @@ public class QuizScreen extends AppCompatActivity {
         }
         colcount = db.getRowCount();
         score = 0;
+        ct++;
     }
 
     public void check(View view)
@@ -186,23 +188,36 @@ public class QuizScreen extends AppCompatActivity {
     public void Generate()
     {
         rnd=random.nextInt(3);
-        if(rnd == 1)
+        if(rnd == 0)
         {
             btn1.setText(str);
             btn2.setText(str2);
             btn3.setText(str3);
         }
-        if(rnd == 2)
+        if(rnd == 1)
         {
             btn1.setText(str2);
             btn2.setText(str);
             btn3.setText(str3);
         }
-        if(rnd == 3)
+        if(rnd == 2)
         {
             btn1.setText(str3);
             btn2.setText(str2);
             btn3.setText(str);
         }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN)
+        {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    Intent intent = new Intent(QuizScreen.this,MainPage.class);
+                    startActivity(intent);
+                    finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -3,6 +3,7 @@ package com.example.graduationproject;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -62,5 +63,108 @@ public class SelectScreen extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    public void vegetables(View view)
+    {
+        flag = 2;
+        if(flag1 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, ListenScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if(flag1==1 && flag2 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, SpeakScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if (flag1==1 && flag2 == 1)
+        {
+            Intent intent =new Intent(SelectScreen.this, QuizScreen.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    public void fruits(View view)
+    {
+        flag = 3;
+        if(flag1 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, ListenScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if(flag1==1 && flag2 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, SpeakScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if (flag1==1 && flag2 == 1)
+        {
+            Intent intent =new Intent(SelectScreen.this, QuizScreen.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    public void numbers(View view)
+    {
+        flag = 4;
+        if(flag1 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, ListenScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if(flag1==1 && flag2 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, SpeakScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if (flag1==1 && flag2 == 1)
+        {
+            Intent intent =new Intent(SelectScreen.this, QuizScreen.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    public void letters(View view)
+    {
+        flag = 5;
+        if(flag1 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, ListenScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if(flag1==1 && flag2 == 0)
+        {
+            Intent intent =new Intent(SelectScreen.this, SpeakScreen.class);
+            startActivity(intent);
+            finish();
+        }
+        if (flag1==1 && flag2 == 1)
+        {
+            Intent intent =new Intent(SelectScreen.this, QuizScreen.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN)
+        {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    Intent intent = new Intent(SelectScreen.this,MainPage.class);
+                    startActivity(intent);
+                    finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

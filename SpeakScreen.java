@@ -14,6 +14,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -65,7 +66,6 @@ public class SpeakScreen extends AppCompatActivity implements View.OnClickListen
             e.printStackTrace();
         }
         mp.start();
-
     }
 
     public void onClick(View v) {
@@ -129,6 +129,8 @@ public class SpeakScreen extends AppCompatActivity implements View.OnClickListen
                 Log.d(TAG, "result " + data.get(i));
                 str += data.get(i);
             }
+
+
             if(str.equals(Comparedstr))
             {
                 textView.setText(str);
@@ -150,7 +152,7 @@ public class SpeakScreen extends AppCompatActivity implements View.OnClickListen
             if(!str.equals(Comparedstr))
             {
                 textView.setVisibility(textView.VISIBLE);
-                textView.setText("Wrong");
+                textView.setText("Oops");
                 new CountDownTimer(2000, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
@@ -165,6 +167,19 @@ public class SpeakScreen extends AppCompatActivity implements View.OnClickListen
                     }
                 }.start();
 
+                new CountDownTimer(6000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        counter++;
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        counter = 0;
+                        Evaluate();
+                    }
+                }.start();
+
 
             }
         }
@@ -173,15 +188,50 @@ public class SpeakScreen extends AppCompatActivity implements View.OnClickListen
         {
             textView.setVisibility(textView.VISIBLE);
             mistake=ed.editDistanceDP(str,Comparedstr);
-            textView.setText(String.valueOf(mistake));
+            textView.setText("Number of mistakes: "+mistake);
+
+            try {
+                mp=db.getSound(Comparedstr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mp.start();
         }
-        public void finish()
-        {
+        public void finish(){
             NameCursor.moveToNext();
             Comparedstr=NameCursor.getString(0);
             bmp=db.getImage(Comparedstr);
+            try {
+                mp=db.getSound(Comparedstr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             lion.setImageBitmap(bmp);
             textView.setVisibility(textView.INVISIBLE);
+            mp.start();
+        }
+
+        public void Evaluate()
+        {
+            textView.setVisibility(textView.VISIBLE);
+            int pos;
+            String[] strArr = new String[Comparedstr.length()];
+            String[] strAr = new String[str.length()];
+            ArrayList<String> mistake = new ArrayList<>();
+            for (int i = 0; i<Comparedstr.length(); i++) {
+                strArr[i] = String.valueOf(Comparedstr.charAt(i));
+                strAr[i] = String.valueOf(str.charAt(i));
+            }
+
+            for (int i = 0, j = 0; i<strArr.length && j<strAr.length; i++, j++) {
+                if(!strArr[i].equals(strAr[j]))
+                {
+                    pos = j;
+                    mistake.add(String.valueOf(str.charAt(pos)));
+                }
+            }
+            textView.setText(mistake.toString());
+
         }
         public void onPartialResults(Bundle partialResults)
         {
@@ -191,5 +241,18 @@ public class SpeakScreen extends AppCompatActivity implements View.OnClickListen
         {
             Log.d(TAG, "onEvent " + eventType);
         }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN)
+        {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    Intent intent = new Intent(SpeakScreen.this,MainPage.class);
+                    startActivity(intent);
+                    finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

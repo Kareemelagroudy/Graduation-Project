@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,7 +27,7 @@ public class ListenScreen extends AppCompatActivity {
     TextView textView;
     MediaPlayer mp,se;
     ImageButton next,replay,previous;
-    int ct = 1;
+    int ct = 1, flag=SelectScreen.flag;
     int colcount=0;
     Cursor NameCursor;
     String str;
@@ -55,6 +56,100 @@ public class ListenScreen extends AppCompatActivity {
         previous.setImageBitmap(bmp);
         bmp = db.ViewImage(13);
         replay.setImageBitmap(bmp);
+        if(flag==1)
+        {
+            play();
+        }
+        if(flag==2 || flag==3 || flag==4 || flag ==5)
+        {
+            ply();
+        }
+    }
+    public void replay(View view)
+    {
+        if(flag==1)
+        {
+            play();
+        }
+        if(flag==2 || flag==3 || flag==4 || flag ==5)
+        {
+            ply();
+        }
+    }
+    public void next(View view) {
+        mp.release();
+        if(flag == 1)
+        {se.release();}
+        if (ct < colcount) {
+            ct++;
+            NameCursor.moveToNext();
+            str = NameCursor.getString(0);
+            textView.setText(str);
+            bmp = db.getImage(str);
+            lion.setImageBitmap(bmp);
+            if(flag==1)
+            {
+                play();
+            }
+            if(flag==2 || flag==3 || flag==4 || flag ==5)
+            {
+                ply();
+            }
+
+        } else
+        {
+            Intent intent =new Intent(ListenScreen.this,MainPage.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    public void previous(View view)
+    {
+        mp.release();
+        if(flag == 1)
+        {se.release();}
+        lion.setImageBitmap(bmp);
+        if(ct>1) {
+            ct--;
+            NameCursor.moveToPrevious();
+            str=NameCursor.getString(0);
+            textView.setText(str);
+            bmp=db.getImage(str);
+            lion.setImageBitmap(bmp);
+            if(flag==1)
+            {
+                play();
+            }
+            if(flag==2 || flag==3 || flag==4 || flag ==5)
+            {
+                ply();
+            }
+        }
+        else
+        {
+            Intent intent = new Intent (ListenScreen.this, SelectScreen.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN)
+        {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    mp.release();
+                    se.release();
+                    Intent intent = new Intent(ListenScreen.this,MainPage.class);
+                    startActivity(intent);
+                    finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void play()
+    {
         try {
             mp = db.getSound(str);
         } catch (IOException e) {
@@ -78,96 +173,31 @@ public class ListenScreen extends AppCompatActivity {
                 se.start();
             }
         });
-    }
-    public void replay(View view)
-    {
-        mp.start();
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        se.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                se.start();
+                se.release();
             }
         });
     }
-    public void next(View view) {
-        mp.stop();
-        se.stop();
-        if (ct < colcount) {
-            ct++;
-            NameCursor.moveToNext();
-            str = NameCursor.getString(0);
-            textView.setText(str);
-            bmp = db.getImage(str);
-            lion.setImageBitmap(bmp);
-            try {
-                mp = db.getSound(str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                se = db.getEffects(str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    se.start();
-                }
-            });
-        } else
-        {
-            Intent intent =new Intent(ListenScreen.this,MainPage.class);
-            startActivity(intent);
-            finish();
-        }
-    }
-    public void previous(View view)
+    public void ply()
     {
-        mp.stop();
-        se.stop();
-        NameCursor.moveToPrevious();
-        str=NameCursor.getString(0);
-        textView.setText(str);
-        bmp=db.getImage(str);
-        lion.setImageBitmap(bmp);
-        if(ct>0) {
-            ct--;
-            try {
-                mp = db.getSound(str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                se = db.getEffects(str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            lion.setImageBitmap(bmp);
-            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    se.start();
-                }
-            });
+        try {
+            mp = db.getSound(str);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        if (ct==0)
-        {
-            ct = 1;
-            Intent intent = new Intent (ListenScreen.this, SelectScreen.class);
-            startActivity(intent);
-        }
+        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.start();
+            }
+        });
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
     }
 }

@@ -1,13 +1,16 @@
 package com.example.graduationproject;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class ScoreScreen extends AppCompatActivity {
     TextView txt;
     TestAdapter db;
@@ -21,8 +24,8 @@ public class ScoreScreen extends AppCompatActivity {
         db.createDatabase();
         db.open();
         score=db.getScore();
-        txt.setText(String.valueOf(score));
-        new CountDownTimer(3000,1000){
+        txt.setText("You got: " + score);
+        new CountDownTimer(5000,1000){
             @Override
             public void onTick(long millisUntilFinished)
             {
@@ -30,10 +33,17 @@ public class ScoreScreen extends AppCompatActivity {
             }
             @Override
             public void onFinish() {
-                Intent intent = new Intent(ScoreScreen.this,MainPage.class);
-                startActivity(intent);
-                finish();
+                ct=0;
+                showNextPage();
             }
         }.start();
     }
+
+    public void showNextPage()
+    {
+        Intent intent = new Intent(ScoreScreen.this,MainPage.class);
+        startActivity(intent);
+        finish();
+    }
+
 }

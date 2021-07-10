@@ -3,6 +3,7 @@ package com.example.graduationproject;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,5 +37,18 @@ public class MinigameScreen extends AppCompatActivity {
         flag = 1;
         Intent intent = new Intent(MinigameScreen.this, SelectScreen.class);
         startActivity(intent);
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(event.getAction()==KeyEvent.ACTION_DOWN)
+        {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    Intent intent = new Intent(MinigameScreen.this,MainPage.class);
+                    startActivity(intent);
+                    finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
